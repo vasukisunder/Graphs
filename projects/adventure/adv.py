@@ -18,7 +18,7 @@ world = World()
 map_file = "projects/adventure/maps/main_maze.txt"
 
 # Loads the map into a dictionary
-room_graph = literal_eval(open(map_file, "r").read())
+room_graph=literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
@@ -31,35 +31,21 @@ player = Player(world.starting_room)
 traversal_path = []
 
 rooms = set()
-# rooms that are visited
+# rooms that are visited 
 player.current_room = world.starting_room
 rooms.add(player.current_room.id)
 last_move = ''
 next_move = ''
 fourways = dict()
-# to help with 4way intersections
+#to help with 4way intersections
 
-next_move = 'e'  # setting first move
+next_move = 'e' #setting first move
 traversal_path.append(next_move)
 
-while len(rooms) < 500:  # continues till all rooms traversed
+while len(rooms) < 500: # continues till all rooms traversed
     player.travel(next_move)
     rooms.add(player.current_room.id)
     last_move = next_move
-     # if 4 way intersection, prevents loop from happening
-    if len(player.current_room.get_exits()) == 4:
-        current = player.current_room.id
-        if current not in fourways:
-            fourways[current] = []
-        if next_move not in fourways[current]:
-            fourways[current].append(next_move)
-        elif len(fourways[current]) < 4:
-            next_move = choice([i for i in ['n', 's', 'e', 'w'] if i not in fourways[current]])
-            fourways[current].append(next_move)
-        else:
-            # choice([i for i in ['n', 's', 'e', 'w']])
-            next_move = fourways[current][len(fourways[current]) % 4]
-            fourways[current].append(next_move)
 
     if last_move == 'e':
         if 's' in player.current_room.get_exits():
@@ -68,8 +54,9 @@ while len(rooms) < 500:  # continues till all rooms traversed
             next_move = 'e'
         elif 'n' in player.current_room.get_exits():
             next_move = 'n'
-        else:
+        else: 
             next_move = 'w'
+    
     elif last_move == 'n':
         if 'e' in player.current_room.get_exits():
             next_move = 'e'
@@ -77,8 +64,9 @@ while len(rooms) < 500:  # continues till all rooms traversed
             next_move = 'n'
         elif 'w' in player.current_room.get_exits():
             next_move = 'w'
-        else:
+        else: 
             next_move = 's'
+    
     elif last_move == 'w':
         if 'n' in player.current_room.get_exits():
             next_move = 'n'
@@ -86,8 +74,9 @@ while len(rooms) < 500:  # continues till all rooms traversed
             next_move = 'w'
         elif 's' in player.current_room.get_exits():
             next_move = 's'
-        else:
+        else: 
             next_move = 'e'
+
     elif last_move == 's':
         if 'w' in player.current_room.get_exits():
             next_move = 'w'
@@ -95,8 +84,23 @@ while len(rooms) < 500:  # continues till all rooms traversed
             next_move = 's'
         elif 'e' in player.current_room.get_exits():
             next_move = 'e'
-        else:
+        else: 
             next_move = 'n'
+
+
+    if len(player.current_room.get_exits()) == 4: #if 4 way intersection, prevents loop from happening
+        current = player.current_room.id
+        if current not in fourways:
+            fourways[current] = []
+        if next_move not in fourways[current]:
+            fourways[current].append(next_move)      
+        elif len(fourways[current]) < 4:
+            next_move = choice([i for i in ['n', 's', 'e', 'w'] if i not in fourways[current]])
+            fourways[current].append(next_move)
+        else:
+            next_move = fourways[current][len(fourways[current])%4] #choice([i for i in ['n', 's', 'e', 'w']])
+            fourways[current].append(next_move)
+        
     traversal_path.append(next_move)
 
     if len(traversal_path) > 2000:
@@ -104,7 +108,9 @@ while len(rooms) < 500:  # continues till all rooms traversed
 
 
 print('Total Rooms traversed:', len(rooms))
-print('Length of Traversal:', len(traversal_path))
+print('Length of Traversal Path:', len(traversal_path))
+
+
 
 
 # TRAVERSAL TEST
@@ -118,8 +124,7 @@ for move in traversal_path:
     print(player.current_room.id, player.current_room.get_exits())
 
 if len(visited_rooms) == len(room_graph):
-    print(
-        f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
+    print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
 else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
